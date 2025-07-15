@@ -123,182 +123,166 @@
 // });
 // ----------------------------------BATAS TUGAS 1----------------------------------------
 // ----------------------------------TUGAS 2----------------------------------------
-import React, { useCallback, useState } from 'react';
-import {
-  Dimensions,
-  Image,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View
-} from 'react-native';
+import React, { useState } from 'react';
+import { Dimensions, Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// --- Konfigurasi Sumber Daya Gambar ---
-// Array ini menyimpan sumber gambar utama dan alternatif.
-// Setiap objek merepresentasikan satu sel di dalam kisi.
-const koleksiSumberGambar = [
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyNRZg2KXTlVxT88X67ig-28tXxCL0PoON4w&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS89tk8EYmK2Ywyp9-bP8MU1WHuBZO9WBMMgTJFxYtNjiYEBkvAadgxCREN5iuA6mCRDOw&usqp=CAU' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTJf7LGe2EupZm5FVDQwcUlv39VCZe5QdAyKg&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSogQn7rfXiEpepGb_RGu79N62fBujxAQKBMA&s' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsSz6ZUat1hXr9YZqxuz979oeP8SyT_vqd2g&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSeX2oXdPA5BvoWSxndJ6JKKNdL5lVHgaraZLD9SkOKf9c5do7YQIvvprncTHWSfyt1hjA&usqp=CAU' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8P_gpeM5fMS0U_PDTx2oFr3r5PMtrgEt25cv94U8TyZ_oJGgzfsP7NK27h-85RSdLdWg&usqp=CAU', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdWp21TT27Lc9cIhuHnkp3MsNfFfKCBgBPYI4fit6voLJuSKTJaJj4d7cz7znkRboUHJM&usqp=CAU' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQE2v4lke4zgAtT7e51Z--iKVbQoKeqmXMwwg&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRxrajD_kN4X62UE5PwSEBaNtBsOc4XA2UcXw&s' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcScqW7A5Yyfa3vWYwTJJFjs2vrzh4vpvr9GKQ&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6WKTn4EjO1Ml0eRrnOr9L3DQlv9BoJam5KA&s' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTeU_UOQsI5DnvOXrUnf56S5QjRsdQMXdMV5g&s', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvqNw8-dbMB1ejB22UUOFomJX_WLfssv0jyw&s' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSij0bL7wcgOrlUayn2oln-EOMXLFZvgP75cWu4z2MYn1TF7HUgjpR_Y2c7kqlVPUHblvk&usqp=CAU', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvCNbaXBiGvlsXWG0oeVffgdiXif55t2U6DA&s' },
-  { utama: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTL573VvS3yXWD0nFqVhkRlJyQ8HcrEEcFCc9O_SH4MPkBrz-Yzb6RiIikAZKiINOLsULg&usqp=CAU', alternatif: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ18bwI_004HXNUanY3k--zqR_DkwqBZLPVgceJ7gZcFJYrH873FLsLoTu-WmGqBUNUyno&usqp=CAU' },
-];
-
-// --- Fungsi Bantuan ---
-// Menginisialisasi status untuk setiap sel gambar.
-const aturKondisiAwalKisi = () => koleksiSumberGambar.map(dataSumber => ({
-  ...dataSumber,
-  urlTampil: dataSumber.utama,
-  skalaTransformasi: 1.0,
-  sedangBermasalah: false,
+// --- Konfigurasi Awal ---
+// Datanya diubah untuk menampilkan gambar yang Anda minta.
+const DATA_GAMBARA = Array.from({ length: 9 }, (_, index) => ({
+  pananda: index + 1,
+  // Gambar orisinil/utama menggunakan link baru.
+  orisinil: `https://i.pinimg.com/736x/8a/ea/22/8aea2261be9889f7a937a0d2810d5591.jpg`,
+  // Gambar cadangan/alternatif diperbarui sesuai permintaan Anda.
+  cadanganna: `https://i.pinimg.com/736x/0b/59/a9/0b59a9a5405a5fd301e4fd0beb0649e5.jpg`,
 }));
 
+// Tipe data untuk memastikan struktur data kita konsisten.
+type InfoGambara = {
+  pananda: number;
+  orisinil: string;
+  cadanganna: string;
+};
+
 /**
- * Komponen LayarKisiGambar
- * Menampilkan kisi gambar interaktif berukuran 3x3.
+ * Komponen untuk satu gambar interaktif.
+ * Sekarang dengan logika skala yang benar dan penanganan error yang lebih baik.
  */
-export default function LayarKisiGambar() {
-  // State untuk mengelola properti dari setiap item dalam kisi.
-  const [itemKisi, setItemKisi] = useState(aturKondisiAwalKisi);
+const GambaraInteraktif = ({ sumberra }: { sumberra: InfoGambara }) => {
+  const [pakeCadanganna, setPakeCadanganna] = useState(false);
+  // State skala sekarang akan meningkat setiap kali gambar dipencet.
+  const [skala, setSkala] = useState(1);
+  const [gagalKiMemuat, setGagalKiMemuat] = useState(false);
+  const [gambarUtamaGagal, setGambarUtamaGagal] = useState(false);
+  const [gambarCadanganGagal, setGambarCadanganGagal] = useState(false);
 
-  // --- Penanganan Aksi ---
+  // Fungsi ini jalan kalau gambara' dipencet.
+  const pasDipencet = () => {
+    // Ganti antara gambar orisinil dan cadangan.
+    const targetPakeCadangan = !pakeCadanganna;
 
-  /**
-   * Mengelola aksi ketika sebuah sel gambar ditekan.
-   * Fungsi ini menukar sumber gambar dan memperbesar skalanya.
-   * Dibungkus dengan useCallback untuk optimisasi performa.
-   */
-  const kelolaAksiTekanSel = useCallback((indeksTerpilih) => {
-    setItemKisi(itemSaatIni =>
-      itemSaatIni.map((item, indeks) => {
-        if (indeks === indeksTerpilih) {
-          // Tentukan URL gambar berikutnya yang akan ditampilkan.
-          const urlTampilBerikutnya = item.urlTampil === item.utama
-            ? item.alternatif
-            : item.utama;
-          
-          // Hitung skala baru, dengan batas maksimal 2.
-          const skalaBerikutnya = item.skalaTransformasi < 2.0
-            ? item.skalaTransformasi * 1.2
-            : 2.0;
+    // Cek apakah gambar yang akan ditampilkan sudah gagal dimuat.
+    if (targetPakeCadangan && gambarCadanganGagal) return;
+    if (!targetPakeCadangan && gambarUtamaGagal) return;
 
-          return {
-            ...item,
-            urlTampil: urlTampilBerikutnya,
-            skalaTransformasi: skalaBerikutnya,
-          };
-        }
-        // Kembalikan item lain tanpa modifikasi.
-        return item;
-      })
-    );
-  }, []); // Dependensi kosong berarti fungsi ini hanya dibuat sekali.
+    setPakeCadanganna(targetPakeCadangan);
 
-  /**
-   * Mengelola error pemuatan gambar untuk sel tertentu.
-   * Dibungkus dengan useCallback untuk optimisasi performa.
-   */
-  const tanganiMasalahGambar = useCallback((indeksError) => {
-    setItemKisi(itemSaatIni =>
-      itemSaatIni.map((item, indeks) => {
-        if (indeks === indeksError) {
-          return { ...item, sedangBermasalah: true };
-        }
-        return item;
-      })
-    );
-  }, []);
+    // Logika skala baru:
+    // Meningkat 20% setiap kali dipencet, dengan batas maksimal 2x (2.0).
+    setSkala(skalaSebelumnya => Math.min(skalaSebelumnya * 1.2, 2));
+  };
 
-  // --- Tampilan Komponen ---
+  // Memilih URL gambar yang akan ditampilkan.
+  const gambaraDipake = pakeCadanganna ? sumberra.cadanganna : sumberra.orisinil;
+  const sedangMemuatGambarUtama = !pakeCadanganna;
+
+  const handleGagalMuat = () => {
+      if(sedangMemuatGambarUtama) {
+          setGambarUtamaGagal(true);
+      } else {
+          setGambarCadanganGagal(true);
+      }
+  }
+
+  const tampilkanError = (sedangMemuatGambarUtama && gambarUtamaGagal) || (!sedangMemuatGambarUtama && gambarCadanganGagal);
+
   return (
-    <SafeAreaView style={gaya.wadahLayar}>
-      <Text style={gaya.judulHalaman}>Galeri Gambar 3x3</Text>
-      <View style={gaya.wadahKisi}>
-        {itemKisi.map((item, indeks) => (
-          <TouchableOpacity
-            key={indeks}
-            style={gaya.selGambar}
-            onPress={() => kelolaAksiTekanSel(indeks)}
-            activeOpacity={0.8}
-          >
-            {item.sedangBermasalah ? (
-              <View style={gaya.wadahPesanError}>
-                <Text style={gaya.teksPesanError}>X</Text>
+    <TouchableOpacity onPress={pasDipencet} style={modelna.wadahGambara}>
+      {tampilkanError ? (
+        // Tampilan error jika gambar gagal dimuat.
+        <View style={modelna.tampilanKasala}>
+          <Text style={modelna.tulisangKasala}>Gagal ji</Text>
+        </View>
+      ) : (
+        <Image
+          source={{ uri: gambaraDipake }}
+          // Set state gagal jika ada error saat memuat URL gambar.
+          onError={handleGagalMuat}
+          style={[modelna.gambara, { transform: [{ scale: skala }] }]}
+        />
+      )}
+    </TouchableOpacity>
+  );
+};
+
+// --- Komponen Utama Aplikasi ---
+// Komponen utama yang menyusun semua gambar dalam grid.
+export default function AplikasiGambara() {
+  const lebaraLayar = Dimensions.get('window').width;
+  // Ukuran setiap sel dihitung berdasarkan lebar layar dibagi 3.
+  // Ini memastikan "Setiap sel gambar harus memiliki ukuran yang sama".
+  const ukuranKotaka = lebaraLayar / 3;
+
+  // Fungsi untuk membagi array jadi beberapa bagian (untuk setiap baris).
+  const potongArrayJadiBagian = (arr: InfoGambara[], ukuranBagian: number): InfoGambara[][] => {
+    const hasilPotongan = [];
+    for (let i = 0; i < arr.length; i += ukuranBagian) {
+      hasilPotongan.push(arr.slice(i, i + ukuranBagian));
+    }
+    return hasilPotongan;
+  };
+
+  const dataPerBaris = potongArrayJadiBagian(DATA_GAMBARA, 3);
+
+  return (
+    <SafeAreaView style={modelna.latara}>
+      <ScrollView contentContainerStyle={modelna.kontainera}>
+        {dataPerBaris.map((baris, index) => (
+          <View key={`baris-${index}`} style={modelna.baris}>
+            {baris.map(item => (
+              // Setiap sel pembungkus diatur dengan width dan height yang sama.
+              <View key={item.pananda} style={[modelna.pembungkusKotaka, { width: ukuranKotaka, height: ukuranKotaka }]}>
+                <GambaraInteraktif sumberra={item} />
               </View>
-            ) : (
-              <Image
-                source={{ uri: item.urlTampil }}
-                style={[
-                  gaya.elemenGambar,
-                  { transform: [{ scale: item.skalaTransformasi }] }
-                ]}
-                resizeMode="cover"
-                onError={() => tanganiMasalahGambar(indeks)}
-              />
-            )}
-          </TouchableOpacity>
+            ))}
+          </View>
         ))}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
-// --- Definisi Gaya ---
-const gaya = StyleSheet.create({
-  wadahLayar: {
+// --- Kumpulan Model (Styling) ---
+const modelna = StyleSheet.create({
+  latara: {
+    backgroundColor: '#f0f0f0',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
   },
-  judulHalaman: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 24,
-    fontFamily: 'sans-serif-condensed',
+  kontainera: {
+    // Kontainer utama untuk scroll view
   },
-  wadahKisi: {
+  baris: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    width: Dimensions.get('window').width > 380 ? 372 : '95%',
   },
-  selGambar: {
-    width: 120,
-    height: 120,
-    margin: 2,
-    backgroundColor: '#e0e0e0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 8,
+  pembungkusKotaka: {
+    padding: 4, // Memberi sedikit jarak antar gambar
+  },
+  wadahGambara: {
+    flex: 1,
+    borderRadius: 12,
     overflow: 'hidden',
+    backgroundColor: '#e0e0e0',
     elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  elemenGambar: {
+  gambara: {
     width: '100%',
     height: '100%',
   },
-  wadahPesanError: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
+  tampilanKasala: {
     alignItems: 'center',
-    backgroundColor: '#c62828',
+    backgroundColor: '#ffdddd',
+    borderRadius: 12,
+    flex: 1,
+    justifyContent: 'center',
   },
-  teksPesanError: {
-    color: 'white',
-    fontSize: 40,
+  tulisangKasala: {
+    color: '#b00020',
+    fontSize: 14,
     fontWeight: 'bold',
   },
 });
+
 // ----------------------------------BATAS TUGAS 2----------------------------------------
